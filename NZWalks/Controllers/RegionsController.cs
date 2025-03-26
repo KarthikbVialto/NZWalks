@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using NZWalks.Data;
 using NZWalks.Models.Domains;
 using NZWalks.Models.DTO;
 using NZWalks.Repositories;
+using System.Text.Json;
 
 namespace NZWalks.Controllers
 {
@@ -18,28 +20,47 @@ namespace NZWalks.Controllers
         private readonly NZWalksDbContext dbContext;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(NZWalksDbContext dbContext,IRegionRepository regionRepository,IMapper mapper)
+        public RegionsController(NZWalksDbContext dbContext,
+                                 IRegionRepository regionRepository,
+                                 IMapper mapper,
+                                 ILogger<RegionsController> logger)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         //GET ALL REGIONS
         [HttpGet]
+        //[Authorize(Roles ="Reader")]
         public async Task<IActionResult> GetAll()
         {
-            //get data from database-domain model
-            var regionsDomain = await regionRepository.GetAllAsync();
+            try
+            {
+                //throw new Exception("this is a custom exception");
+                //get data from database-domain model
+                var regionsDomain = await regionRepository.GetAllAsync();
 
-            //return dtos
-            return Ok(mapper.Map<List<RegionDto>>(regionsDomain)); 
+                logger.LogInformation($"Finished GetAllRegions request with data:{JsonSerializer.Serialize(regionsDomain)}");
+                //return dtos
+                return Ok(mapper.Map<List<RegionDto>>(regionsDomain));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
+            
+            
         }
 
         //GET REGION BY ID
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
            
@@ -55,6 +76,7 @@ namespace NZWalks.Controllers
         //POST TO CREATE NEW REGION
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
 
@@ -77,6 +99,7 @@ namespace NZWalks.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
                 //convert updaterequest dto to domain model
@@ -97,6 +120,7 @@ namespace NZWalks.Controllers
         //DELETE TO DELETE A REGION
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute]Guid id)
         {
 
