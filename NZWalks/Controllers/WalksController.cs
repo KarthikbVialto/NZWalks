@@ -43,7 +43,7 @@ namespace NZWalks.Controllers
             var walkDomainModel = await walkRepository.GetAllAsync(filterOn,filterQuery,sortBy,
                                                                    isAscending,pageNumber,pageSize);
 
-            throw new Exception("this is a new Exception");
+            //throw new Exception("this is a new Exception");
             return Ok(mapper.Map<List<WalkDto>>(walkDomainModel));
 
         }

@@ -1,0 +1,50 @@
+﻿@model NZWalk.UI.Models.DTO.WalkDto
+@{
+}
+<h1 class="mt-3">Edit Walk</h1>
+<form method="post">
+
+    <div class="mt-3">
+        <label class="form-label">Id</label>
+        <input class="form-control" type="text" asp-for="Id" readonly />
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">Name</label>
+        <input class="form-control" type="text" asp-for="Name"/>
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">Description</label>
+        <input class="form-control" type="text" asp-for="Description"/>
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">LengthInKm</label>
+        <input class="form-control" type="text" asp-for="LengthInKm" />
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">WalkImageUrl</label>
+        <input class="form-control" type="text" asp-for="WalkImageUrl"/>
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">RegionId</label>
+        <input class="form-control" type="text" asp-for="RegionId"/>
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label">DifficultyId</label>
+        <input class="form-control" type="text" asp-for="DifficultyId"/>
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+
+    <div class="mt-3 d-flex justify-content-between">
+        <button class="btn btn-danger" type="submit" 
+            asp-controller="Walks" asp-action="Delete">Delete</button>
+    </div>
+</form>
